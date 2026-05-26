@@ -3,82 +3,92 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RJ Capital · Live v4</title>
+<title>RJ Capital · Live</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&family=DM+Sans:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
   :root{--bg:#0d0d0d;--s1:#161616;--s2:#1e1e1e;--b:#272727;--acc:#c8ff00;--blue:#4da6ff;--gold:#ffc84d;--t:#f0f0f0;--m:#888;--g:#00e676;--r:#ff4444;}
   *{margin:0;padding:0;box-sizing:border-box;}
   body{background:var(--bg);color:var(--t);font-family:'DM Sans',sans-serif;min-height:100vh;}
-  header{display:flex;align-items:center;justify-content:space-between;padding:16px 22px;border-bottom:1px solid var(--b);background:rgba(13,13,13,.97);}
+  header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--b);background:rgba(13,13,13,.97);position:sticky;top:0;z-index:100;}
   .logo-name{font-size:20px;font-weight:900;}.logo-name span{color:var(--acc);}
-  .logo-sub{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--m);letter-spacing:2px;text-transform:uppercase;margin-top:2px;}
+  .logo-sub{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--m);letter-spacing:2px;text-transform:uppercase;margin-top:2px;}
   .hright{display:flex;align-items:center;gap:10px;}
-  .pill{display:flex;align-items:center;gap:7px;background:var(--s2);border:1px solid var(--b);border-radius:20px;padding:6px 13px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--m);}
+  .pill{display:flex;align-items:center;gap:7px;background:var(--s2);border:1px solid var(--b);border-radius:20px;padding:5px 12px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--m);}
   .dot{width:7px;height:7px;border-radius:50%;background:var(--m);flex-shrink:0;}
   .dot.live{background:var(--g);box-shadow:0 0 7px var(--g);animation:blink 2s infinite;}
   .dot.partial{background:var(--gold);}
   .dot.err{background:var(--r);}
   @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
-  .btn{background:var(--acc);color:#000;border:none;border-radius:8px;padding:9px 18px;font-family:'DM Sans',sans-serif;font-weight:700;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:7px;}
+  .btn{background:var(--acc);color:#000;border:none;border-radius:8px;padding:8px 16px;font-family:'DM Sans',sans-serif;font-weight:700;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:7px;}
   .btn:hover{filter:brightness(1.1);}
   .btn:disabled{opacity:.4;cursor:not-allowed;}
-  .spin{width:13px;height:13px;border:2px solid #000;border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinite;display:none;}
+  .spin{width:12px;height:12px;border:2px solid #000;border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinite;display:none;}
   .btn.loading .spin{display:block;}.btn.loading .lbl{display:none;}
   @keyframes spin{to{transform:rotate(360deg);}}
-  .qbar{display:flex;overflow-x:auto;border-bottom:1px solid var(--b);}
-  .qi{padding:12px 18px;border-right:1px solid var(--b);flex-shrink:0;min-width:100px;}
-  .qi-l{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--m);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;}
-  .qi-p{font-size:16px;font-weight:700;}
-  .qi-c{font-family:'IBM Plex Mono',monospace;font-size:11px;margin-top:2px;}
+  .qbar{display:flex;overflow-x:auto;border-bottom:1px solid var(--b);scrollbar-width:thin;}
+  .qi{padding:10px 16px;border-right:1px solid var(--b);flex-shrink:0;min-width:90px;}
+  .qi-l{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--m);text-transform:uppercase;letter-spacing:1px;margin-bottom:2px;}
+  .qi-p{font-size:15px;font-weight:700;}
+  .qi-c{font-family:'IBM Plex Mono',monospace;font-size:10px;margin-top:1px;}
   .pos{color:var(--g);}.neg{color:var(--r);}.neu{color:var(--m);}
-  .wrap{padding:18px 22px;display:flex;flex-direction:column;gap:18px;}
+  .tabs{display:flex;gap:0;border-bottom:1px solid var(--b);overflow-x:auto;background:var(--s1);}
+  .tab{padding:10px 18px;font-size:12px;font-weight:500;color:var(--m);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s;}
+  .tab:hover{color:var(--t);}
+  .tab.active{color:var(--acc);border-bottom-color:var(--acc);}
+  .wrap{padding:16px 20px;display:flex;flex-direction:column;gap:16px;}
+  .tab-content{display:none;}.tab-content.active{display:flex;flex-direction:column;gap:16px;}
   .panel{background:var(--s1);border:1px solid var(--b);border-radius:12px;overflow:hidden;}
-  .ph{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--b);}
+  .ph{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;border-bottom:1px solid var(--b);}
   .pt{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--m);text-transform:uppercase;letter-spacing:2px;}
-  .pb{font-family:'IBM Plex Mono',monospace;font-size:10px;background:var(--s2);border:1px solid var(--b);border-radius:4px;padding:2px 8px;color:var(--m);}
-  .tr{display:grid;align-items:center;padding:9px 16px;border-bottom:1px solid rgba(39,39,39,.6);transition:background .1s;gap:8px;}
+  .pb{font-family:'IBM Plex Mono',monospace;font-size:9px;background:var(--s2);border:1px solid var(--b);border-radius:4px;padding:2px 7px;color:var(--m);}
+  .tr{display:grid;align-items:center;padding:8px 14px;border-bottom:1px solid rgba(39,39,39,.6);transition:background .1s;gap:6px;}
   .tr:last-child{border-bottom:none;}.tr:hover{background:var(--s2);}
-  .tr.hdr{background:var(--s2);padding:7px 16px;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--m);text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--b);}
-  .sym{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;color:var(--blue);}
-  .nm{font-size:12px;color:var(--m);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-  .px{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:700;text-align:right;}
-  .cp{display:inline-block;padding:2px 7px;border-radius:4px;font-size:11px;font-family:'IBM Plex Mono',monospace;}
+  .tr.hdr{background:var(--s2);padding:6px 14px;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--m);text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--b);}
+  .sym{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;color:var(--blue);}
+  .nm{font-size:11px;color:var(--m);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .px{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;text-align:right;}
+  .cp{display:inline-block;padding:2px 6px;border-radius:4px;font-size:10px;font-family:'IBM Plex Mono',monospace;}
   .cp.pos{background:rgba(0,230,118,.1);color:var(--g);}
   .cp.neg{background:rgba(255,68,68,.1);color:var(--r);}
   .cp.neu{background:rgba(136,136,136,.1);color:var(--m);}
   .vol{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--m);text-align:right;}
-  .g2{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+  .g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
   .reco{background:var(--s1);border:1px solid var(--gold);border-radius:12px;overflow:hidden;}
-  .rh{padding:13px 16px;border-bottom:1px solid rgba(255,200,77,.2);display:flex;align-items:center;justify-content:space-between;}
-  .rt{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:2px;}
+  .rh{padding:12px 14px;border-bottom:1px solid rgba(255,200,77,.2);display:flex;align-items:center;justify-content:space-between;}
+  .rt{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--gold);text-transform:uppercase;letter-spacing:2px;}
   .rts{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--m);}
   .rgrid{display:grid;grid-template-columns:repeat(5,1fr);}
-  .rc{padding:13px 14px;border-right:1px solid var(--b);border-bottom:1px solid var(--b);}
+  .rc{padding:12px;border-right:1px solid var(--b);border-bottom:1px solid var(--b);}
   .rc:nth-child(5n){border-right:none;}.rc:nth-last-child(-n+5){border-bottom:none;}
-  .rca{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--blue);margin-bottom:3px;}
-  .rcv{font-size:22px;font-weight:900;margin-bottom:2px;}
-  .rcs{font-size:11px;font-weight:700;margin-bottom:3px;}
-  .rcn{font-size:10px;color:var(--m);line-height:1.5;}
+  .rca{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--blue);margin-bottom:2px;}
+  .rcv{font-size:20px;font-weight:900;margin-bottom:2px;}
+  .rcs{font-size:10px;font-weight:700;margin-bottom:2px;}
+  .rcn{font-size:10px;color:var(--m);line-height:1.4;}
   .s-buy{color:var(--g);}.s-hold{color:var(--gold);}.s-wait{color:var(--m);}.s-red{color:var(--r);}
-  .al{display:flex;gap:10px;align-items:flex-start;padding:10px 16px;border-bottom:1px solid rgba(39,39,39,.5);}
+  .al{display:flex;gap:10px;align-items:flex-start;padding:9px 14px;border-bottom:1px solid rgba(39,39,39,.5);}
   .al:last-child{border-bottom:none;}
-  .ald{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:5px;}
-  .alt{font-size:12px;line-height:1.6;}.alt strong{color:var(--blue);}
-  .msg{padding:18px;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--m);}
-  .infobox{padding:10px 14px;border-radius:8px;font-family:'IBM Plex Mono',monospace;font-size:11px;margin-bottom:8px;}
+  .ald{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:4px;}
+  .alt{font-size:11px;line-height:1.5;}.alt strong{color:var(--blue);}
+  .msg{padding:16px;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--m);}
+  .infobox{padding:9px 12px;border-radius:8px;font-family:'IBM Plex Mono',monospace;font-size:11px;margin-bottom:6px;}
+  .info-green{background:rgba(0,230,118,.08);border:1px solid rgba(0,230,118,.2);color:var(--g);}
   .info-blue{background:rgba(77,166,255,.08);border:1px solid rgba(77,166,255,.2);color:var(--blue);}
-  .info-red{background:rgba(255,68,68,.08);border:1px solid rgba(255,68,68,.2);color:var(--r);}
-  footer{margin:0 22px 22px;padding-top:12px;border-top:1px solid var(--b);font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--m);}
-  @media(max-width:800px){.g2{grid-template-columns:1fr;}.rgrid{grid-template-columns:repeat(3,1fr);}}
-  @media(max-width:500px){.rgrid{grid-template-columns:repeat(2,1fr);}}
+  .bcard{background:var(--s2);border:1px solid var(--b);border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:4px;}
+  .bc-sym{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;color:var(--blue);}
+  .bc-nm{font-size:11px;color:var(--m);}
+  .bc-tir{font-size:17px;font-weight:900;color:var(--g);}
+  .bc-px{font-family:'IBM Plex Mono',monospace;font-size:11px;}
+  footer{margin:0 20px 20px;padding-top:10px;border-top:1px solid var(--b);font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--m);}
+  @media(max-width:900px){.g3{grid-template-columns:1fr 1fr;}.rgrid{grid-template-columns:repeat(3,1fr);}}
+  @media(max-width:600px){.g2,.g3{grid-template-columns:1fr;}.rgrid{grid-template-columns:repeat(2,1fr);}}
 </style>
 </head>
 <body>
-
 <header>
   <div>
     <div class="logo-name">RJ <span>Capital</span></div>
-    <div class="logo-sub">Live v4 · corsproxy + CoinGecko · Moderado · Riesgo máx 10%</div>
+    <div class="logo-sub">Live · Multi-proxy · Moderado · Riesgo máx 10%</div>
   </div>
   <div class="hright">
     <div class="pill"><div class="dot" id="sDot"></div><span id="sTxt">Sin datos</span></div>
@@ -93,230 +103,311 @@
   <div class="qi"><div class="qi-l">YPF</div><div class="qi-p" id="q-YPF">—</div><div class="qi-c" id="qc-YPF">—</div></div>
   <div class="qi"><div class="qi-l">PAM</div><div class="qi-p" id="q-PAM">—</div><div class="qi-c" id="qc-PAM">—</div></div>
   <div class="qi"><div class="qi-l">VIST</div><div class="qi-p" id="q-VIST">—</div><div class="qi-c" id="qc-VIST">—</div></div>
-  <div class="qi"><div class="qi-l">NVDA</div><div class="qi-p" id="q-NVDA">—</div><div class="qi-c" id="qc-NVDA">—</div></div>
   <div class="qi"><div class="qi-l">SPY</div><div class="qi-p" id="q-SPY">—</div><div class="qi-c" id="qc-SPY">—</div></div>
+  <div class="qi"><div class="qi-l">NVDA</div><div class="qi-p" id="q-NVDA">—</div><div class="qi-c" id="qc-NVDA">—</div></div>
   <div class="qi"><div class="qi-l">GLD</div><div class="qi-p" id="q-GLD">—</div><div class="qi-c" id="qc-GLD">—</div></div>
-  <div class="qi"><div class="qi-l">BTC</div><div class="qi-p" id="q-BTC-USD">—</div><div class="qi-c" id="qc-BTC-USD">—</div></div>
-  <div class="qi"><div class="qi-l">ETH</div><div class="qi-p" id="q-ETH-USD">—</div><div class="qi-c" id="qc-ETH-USD">—</div></div>
+  <div class="qi"><div class="qi-l">BTC</div><div class="qi-p" id="q-BTC">—</div><div class="qi-c" id="qc-BTC">—</div></div>
+  <div class="qi"><div class="qi-l">ETH</div><div class="qi-p" id="q-ETH">—</div><div class="qi-c" id="qc-ETH">—</div></div>
+  <div class="qi"><div class="qi-l">IBIT</div><div class="qi-p" id="q-IBIT">—</div><div class="qi-c" id="qc-IBIT">—</div></div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" data-tab="acciones">Acciones AR</div>
+  <div class="tab" data-tab="cedears">CEDEARs</div>
+  <div class="tab" data-tab="etfs">ETFs · Sectores</div>
+  <div class="tab" data-tab="bonos">Bonos AR</div>
+  <div class="tab" data-tab="crypto">Crypto</div>
+  <div class="tab" data-tab="cartera">⚡ Cartera</div>
 </div>
 
 <div class="wrap">
 <div id="msgBox"></div>
 
-<div class="g2">
-  <div class="panel">
-    <div class="ph"><span class="pt">Acciones AR · ADR (USD)</span><span class="pb" id="src-ar">cargando...</span></div>
-    <div class="tr hdr" style="grid-template-columns:70px 1fr 95px 80px 65px;"><span>Ticker</span><span>Nombre</span><span style="text-align:right">Precio USD</span><span style="text-align:right">Var %</span><span style="text-align:right">Vol</span></div>
-    <div id="arList"><div class="msg">cargando...</div></div>
-  </div>
-  <div class="panel">
-    <div class="ph"><span class="pt">CEDEARs · ETFs (USD)</span><span class="pb" id="src-ced">cargando...</span></div>
-    <div class="tr hdr" style="grid-template-columns:70px 1fr 95px 80px 65px;"><span>Ticker</span><span>Nombre</span><span style="text-align:right">Precio USD</span><span style="text-align:right">Var %</span><span style="text-align:right">Vol</span></div>
-    <div id="cedList"><div class="msg">cargando...</div></div>
+<div id="tab-acciones" class="tab-content active">
+  <div class="g2">
+    <div class="panel">
+      <div class="ph"><span class="pt">Acciones Líderes · ADR (USD)</span><span class="pb">NYSE/Nasdaq</span></div>
+      <div class="tr hdr" style="grid-template-columns:65px 1fr 88px 72px 62px;"><span>Ticker</span><span>Nombre</span><span style="text-align:right">USD</span><span style="text-align:right">Var%</span><span style="text-align:right">Vol</span></div>
+      <div id="arList"><div class="msg">cargando...</div></div>
+    </div>
+    <div class="panel">
+      <div class="ph"><span class="pt">ONs · Obligaciones Negociables USD</span><span class="pb">ref · IOL</span></div>
+      <div class="tr hdr" style="grid-template-columns:75px 1fr 75px 72px 55px;"><span>ON</span><span>Emisor</span><span style="text-align:right">TIR</span><span style="text-align:right">Precio</span><span style="text-align:right">Vto</span></div>
+      <div id="onList"></div>
+    </div>
   </div>
 </div>
 
-<div class="g2">
+<div id="tab-cedears" class="tab-content">
+  <div class="g2">
+    <div class="panel">
+      <div class="ph"><span class="pt">CEDEARs Tech · Consumo</span><span class="pb">USD</span></div>
+      <div class="tr hdr" style="grid-template-columns:65px 1fr 88px 72px 62px;"><span>Ticker</span><span>Nombre</span><span style="text-align:right">USD</span><span style="text-align:right">Var%</span><span style="text-align:right">Vol</span></div>
+      <div id="cedTechList"><div class="msg">cargando...</div></div>
+    </div>
+    <div class="panel">
+      <div class="ph"><span class="pt">CEDEARs Salud · Energía · Minería</span><span class="pb">USD</span></div>
+      <div class="tr hdr" style="grid-template-columns:65px 1fr 88px 72px 62px;"><span>Ticker</span><span>Nombre</span><span style="text-align:right">USD</span><span style="text-align:right">Var%</span><span style="text-align:right">Vol</span></div>
+      <div id="cedOtherList"><div class="msg">cargando...</div></div>
+    </div>
+  </div>
+</div>
+
+<div id="tab-etfs" class="tab-content">
+  <div class="g2">
+    <div class="panel">
+      <div class="ph"><span class="pt">ETFs Metales · Bitcoin · Índices</span><span class="pb">USD</span></div>
+      <div class="tr hdr" style="grid-template-columns:65px 1fr 88px 72px 62px;"><span>Ticker</span><span>Nombre</span><span style="text-align:right">USD</span><span style="text-align:right">Var%</span><span style="text-align:right">Vol</span></div>
+      <div id="etfList"><div class="msg">cargando...</div></div>
+    </div>
+    <div class="panel">
+      <div class="ph"><span class="pt">Sectores · Semis · Espacial · Salud</span><span class="pb">USD</span></div>
+      <div class="tr hdr" style="grid-template-columns:65px 1fr 88px 72px 62px;"><span>Ticker</span><span>Nombre</span><span style="text-align:right">USD</span><span style="text-align:right">Var%</span><span style="text-align:right">Vol</span></div>
+      <div id="sectorList"><div class="msg">cargando...</div></div>
+    </div>
+  </div>
+</div>
+
+<div id="tab-bonos" class="tab-content">
+  <div class="panel">
+    <div class="ph"><span class="pt">Bonos Soberanos USD · Hard Dollar</span><span class="pb">TIR ref · Allaria</span></div>
+    <div class="g2" style="padding:14px;gap:10px;" id="bonosHD"></div>
+  </div>
+  <div class="panel">
+    <div class="ph"><span class="pt">Bonos CER · Lecap · Pesos</span><span class="pb">ARS · ref</span></div>
+    <div class="g3" style="padding:14px;gap:10px;" id="bonosPesos"></div>
+  </div>
+</div>
+
+<div id="tab-crypto" class="tab-content">
   <div class="panel">
     <div class="ph"><span class="pt">Crypto (USD)</span><span class="pb">CoinGecko · tiempo real</span></div>
-    <div class="tr hdr" style="grid-template-columns:90px 1fr 110px 90px 65px;"><span>Ticker</span><span>Nombre</span><span style="text-align:right">Precio USD</span><span style="text-align:right">24h %</span><span style="text-align:right">Rank</span></div>
+    <div class="tr hdr" style="grid-template-columns:80px 1fr 110px 90px 80px;"><span>Ticker</span><span>Nombre</span><span style="text-align:right">Precio USD</span><span style="text-align:right">24h%</span><span style="text-align:right">Cap</span></div>
     <div id="cryptoList"><div class="msg">cargando...</div></div>
   </div>
-  <div class="panel">
-    <div class="ph"><span class="pt">Bonos soberanos AR</span><span class="pb">TIR ref · Allaria</span></div>
-    <div id="bonosList">
-      <div class="tr" style="grid-template-columns:70px 1fr 80px 80px;">
-        <span class="sym">AL30</span><span class="nm">USD 2030 Ley AR</span><span class="px pos">TIR 7.6%</span><span class="cp pos">$91.090</span>
-      </div>
-      <div class="tr" style="grid-template-columns:70px 1fr 80px 80px;">
-        <span class="sym">GD30</span><span class="nm">Global USD 2030 NY</span><span class="px pos">TIR 7.7%</span><span class="cp pos">$90.500</span>
-      </div>
-      <div class="tr" style="grid-template-columns:70px 1fr 80px 80px;">
-        <span class="sym">AL35</span><span class="nm">USD 2035 Ley AR</span><span class="px pos">TIR 8.2%</span><span class="cp neu">est.</span>
-      </div>
-      <div class="msg" style="padding:8px 16px;text-align:left;font-size:10px;">Precios ARS ref · 20min delay · Allaria</div>
+</div>
+
+<div id="tab-cartera" class="tab-content">
+  <div class="reco">
+    <div class="rh"><span class="rt">⚡ Cartera recomendada del día</span><span class="rts" id="recoTs">—</span></div>
+    <div class="rgrid" id="recoGrid"><div class="msg" style="grid-column:1/-1;">Cargando...</div></div>
+  </div>
+  <div class="g2">
+    <div class="panel">
+      <div class="ph"><span class="pt">Señales del día</span></div>
+      <div id="alertList"><div class="msg">—</div></div>
     </div>
-  </div>
-</div>
-
-<div class="reco">
-  <div class="rh"><span class="rt">⚡ Cartera recomendada del día</span><span class="rts" id="recoTs">—</span></div>
-  <div class="rgrid" id="recoGrid"><div class="msg" style="grid-column:1/-1;">Cargando precios...</div></div>
-</div>
-
-<div class="g2">
-  <div class="panel">
-    <div class="ph"><span class="pt">Señales del día</span></div>
-    <div id="alertList"><div class="msg">—</div></div>
-  </div>
-  <div class="panel">
-    <div class="ph"><span class="pt">Contexto macro</span></div>
-    <div>
-      <div class="al"><div class="ald" style="background:var(--g)"></div><div class="alt"><strong>Riesgo país ~500pb</strong> bajando · Mejor momento bonos en meses</div></div>
-      <div class="al"><div class="ald" style="background:var(--g)"></div><div class="alt"><strong>Inflación abr 2.6%</strong> · Tendencia desinflacionaria · Bueno para tasas</div></div>
-      <div class="al"><div class="ald" style="background:var(--gold)"></div><div class="alt"><strong>Hormuz</strong> · Posible reapertura → petróleo normaliza → YPF/PAM positivo</div></div>
-      <div class="al"><div class="ald" style="background:var(--r)"></div><div class="alt"><strong>GGAL earnings mañana 27/5</strong> · Q1 ganancia -66% · No ampliar bancos</div></div>
-      <div class="al"><div class="ald" style="background:var(--gold)"></div><div class="alt"><strong>BTC</strong> lateral $74.5k–$77k · ETF outflows $1.26B · No agregar</div></div>
+    <div class="panel">
+      <div class="ph"><span class="pt">Contexto macro</span></div>
+      <div id="macroPanel">
+        <div class="al"><div class="ald" style="background:var(--g)"></div><div class="alt"><strong>Riesgo país ~500pb</strong> bajando · Mejor momento bonos en meses</div></div>
+        <div class="al"><div class="ald" style="background:var(--g)"></div><div class="alt"><strong>Inflación abr 2.6%</strong> · Desinflación · Positivo tasas</div></div>
+        <div class="al"><div class="ald" style="background:var(--gold)"></div><div class="alt"><strong>Hormuz</strong> · Posible reapertura → YPF/PAM positivo</div></div>
+        <div class="al"><div class="ald" style="background:var(--r)"></div><div class="alt"><strong>GGAL earnings 27/5</strong> · Q1 -66% · No ampliar</div></div>
+        <div class="al"><div class="ald" style="background:var(--gold)"></div><div class="alt"><strong>Semis bajo presión</strong> · NVDA -2% · Esperar soporte</div></div>
+      </div>
     </div>
   </div>
 </div>
 
 </div>
-<footer>RJ CAPITAL v4 · Acciones/ETFs: corsproxy.io → Yahoo Finance · Crypto: CoinGecko · Bonos AR: Allaria (ref) · No es asesoramiento financiero · <span id="lastUp">—</span></footer>
+<footer>RJ CAPITAL · Yahoo Finance (multi-proxy) + CoinGecko · Bonos: Allaria/Rava ref · No es asesoramiento financiero · <span id="lastUp">—</span></footer>
 
 <script>
-const AR=[
+// ── TICKERS ──────────────────────────────────────────────────────────────────
+const AR_TICKERS=[
   {s:'GGAL',n:'Grupo Galicia'},{s:'BMA',n:'Banco Macro'},
   {s:'PAM',n:'Pampa Energía'},{s:'YPF',n:'YPF S.A.'},
   {s:'VIST',n:'Vista Energy'},{s:'TGS',n:'Transp. Gas Sur'},
   {s:'EDN',n:'Edenor'},{s:'CEPU',n:'Central Puerto'},
   {s:'SUPV',n:'Supervielle'},{s:'BBAR',n:'BBVA Argentina'},
+  {s:'LOMA',n:'Loma Negra'},{s:'TS',n:'Tenaris'},
+  {s:'TX',n:'Ternium'},{s:'AGRO',n:'Adecoagro'},
 ];
-const CED=[
+const CED_TECH=[
   {s:'AAPL',n:'Apple'},{s:'GOOGL',n:'Alphabet'},
   {s:'NVDA',n:'NVIDIA'},{s:'MELI',n:'MercadoLibre'},
-  {s:'MSTR',n:'MicroStrategy'},{s:'GOLD',n:'Barrick Gold'},
-  {s:'SPY',n:'S&P 500 ETF'},{s:'QQQ',n:'Nasdaq ETF'},
-  {s:'GLD',n:'Gold ETF'},{s:'SLV',n:'Silver ETF'},{s:'GDX',n:'Gold Miners'},
+  {s:'MSTR',n:'MicroStrategy'},{s:'AMZN',n:'Amazon'},
+  {s:'META',n:'Meta'},{s:'MSFT',n:'Microsoft'},
+  {s:'MU',n:'Micron Technology'},
 ];
-// CoinGecko IDs
-const GECKO_IDS = {
-  'BTC-USD':'bitcoin','ETH-USD':'ethereum',
-  'AAPL':'apple-inc','GOOGL':'alphabet','NVDA':'nvidia',
-  'MELI':'mercadolibre','MSTR':'microstrategy',
-};
+const CED_OTHER=[
+  {s:'GOLD',n:'Barrick Gold'},{s:'AZN',n:'AstraZeneca'},
+  {s:'LLY',n:'Eli Lilly'},{s:'PFE',n:'Pfizer'},
+  {s:'XOM',n:'ExxonMobil'},{s:'CVX',n:'Chevron'},
+];
+const ETF_LIST=[
+  {s:'SPY',n:'S&P 500 ETF'},{s:'QQQ',n:'Nasdaq 100 ETF'},
+  {s:'GLD',n:'Gold ETF'},{s:'SLV',n:'Silver ETF'},
+  {s:'GDX',n:'Gold Miners ETF'},{s:'IBIT',n:'Bitcoin ETF iShares'},
+];
+const SECTOR_LIST=[
+  {s:'SOXX',n:'Semis iShares'},{s:'SMH',n:'Semis VanEck'},
+  {s:'ARKX',n:'Espacial ARK'},{s:'UFO',n:'Espacial Procure'},
+  {s:'XLE',n:'Energía Sector'},{s:'XLF',n:'Financiero Sector'},
+  {s:'XLV',n:'Salud Sector'},{s:'XLK',n:'Tecnología Sector'},
+];
+const BONOS_HD=[
+  {s:'AL30',n:'USD 2030 Ley AR',tir:'7.6%',px:'$91.090',chg:'+0.93%',pos:true},
+  {s:'GD30',n:'Global 2030 Ley NY',tir:'7.7%',px:'$90.500',chg:'+0.30%',pos:true},
+  {s:'AL35',n:'USD 2035 Ley AR',tir:'8.2%',px:'est.',chg:'+1.10%',pos:true},
+  {s:'GD35',n:'Global 2035 Ley NY',tir:'8.5%',px:'est.',chg:'+1.40%',pos:true},
+  {s:'AO28',n:'USD 2028 Ley AR',tir:'7.2%',px:'est.',chg:'+0.60%',pos:true},
+  {s:'AO27',n:'USD 2027 Ley AR',tir:'6.8%',px:'est.',chg:'+0.50%',pos:true},
+  {s:'AN29',n:'USD 2029 Ley NY',tir:'7.4%',px:'est.',chg:'+0.70%',pos:true},
+];
+const BONOS_PESOS=[
+  {s:'TZV26',n:'Lecap jun 2026',tir:'TEM ~3.1%',tipo:'LECAP'},
+  {s:'TX26',n:'CER 2026',tir:'CER +0%',tipo:'CER'},
+  {s:'LECER',n:'Letras CER',tir:'CER +varía',tipo:'CER'},
+  {s:'LECAP',n:'Letras Capitalización',tir:'TEM ~3%',tipo:'LECAP'},
+];
+const ONS=[
+  {s:'YCA6O',n:'YPF ON USD 2026',tir:'~8.5%',px:'~$97',vto:'2026'},
+  {s:'YMCXO',n:'YPF ON USD 2031',tir:'~9.2%',px:'~$94',vto:'2031'},
+  {s:'RPC3O',n:'Pampa ON USD',tir:'~7.8%',px:'~$98',vto:'2027'},
+  {s:'TLCMO',n:'Telecom ON USD',tir:'~8.1%',px:'~$96',vto:'2028'},
+  {s:'IRCFO',n:'IRSA ON USD',tir:'~9.5%',px:'~$95',vto:'2028'},
+  {s:'CAC2O',n:'Cresud ON USD',tir:'~9.8%',px:'~$93',vto:'2026'},
+];
+
 let P={};
 
-// ── corsproxy.io → Yahoo Finance ─────────────────────────────────────────────
-async function fetchYahooCors(sym){
-  try{
-    const yahooUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(sym)}?interval=1d&range=2d`;
-    const proxyUrl = `https://corsproxy.io/?url=${encodeURIComponent(yahooUrl)}`;
-    const r = await fetch(proxyUrl, {signal: AbortSignal.timeout(10000)});
-    if(!r.ok) throw new Error('HTTP '+r.status);
-    const text = await r.text();
-    // corsproxy might wrap it
-    let data;
-    try { data = JSON.parse(text); } catch(e) { throw new Error('JSON parse failed'); }
-    // Navigate the Yahoo structure
-    const result = data?.chart?.result;
-    if(!result || !result[0]) throw new Error('No result');
-    const meta = result[0].meta;
-    const price = meta?.regularMarketPrice ?? meta?.postMarketPrice;
-    const prev = meta?.chartPreviousClose ?? meta?.previousClose ?? 0;
-    if(!price || isNaN(price)) throw new Error('No price in meta');
-    const chg = prev ? ((price-prev)/prev*100) : 0;
-    const vol = meta?.regularMarketVolume ?? 0;
-    return {price, chg, vol, ok:true, src:'corsproxy→Yahoo'};
-  }catch(e){
-    return {price:null, chg:null, vol:0, ok:false, src:'—', err:e.message};
+// ── PROXIES: rotate between 3 to avoid rate limits ───────────────────────────
+const PROXIES=[
+  s=>`https://corsproxy.io/?url=${encodeURIComponent('https://query1.finance.yahoo.com/v8/finance/chart/'+s+'?interval=1d&range=2d')}`,
+  s=>`https://api.allorigins.win/get?url=${encodeURIComponent('https://query1.finance.yahoo.com/v8/finance/chart/'+s+'?interval=1d&range=2d')}`,
+  s=>`https://thingproxy.freeboard.io/fetch/https://query1.finance.yahoo.com/v8/finance/chart/${s}?interval=1d&range=2d`,
+];
+let proxyIdx=0;
+
+async function fetchOne(sym){
+  // Try 3 proxies in rotation
+  for(let attempt=0;attempt<3;attempt++){
+    const idx=(proxyIdx+attempt)%PROXIES.length;
+    try{
+      const url=PROXIES[idx](encodeURIComponent(sym));
+      const r=await fetch(url,{signal:AbortSignal.timeout(9000)});
+      if(!r.ok) continue;
+      let data;
+      const text=await r.text();
+      // allorigins wraps in {contents: "..."}
+      try{
+        const j=JSON.parse(text);
+        data=j.contents?JSON.parse(j.contents):j;
+      }catch(e){ continue; }
+      const result=data?.chart?.result;
+      if(!result?.[0]) continue;
+      const meta=result[0].meta;
+      const price=meta?.regularMarketPrice;
+      const prev=meta?.chartPreviousClose??meta?.previousClose??0;
+      if(!price||isNaN(price)) continue;
+      proxyIdx=(idx+1)%PROXIES.length; // rotate for next call
+      return{price,chg:prev?((price-prev)/prev*100):0,vol:meta?.regularMarketVolume??0,ok:true};
+    }catch(e){}
   }
+  return{price:null,chg:null,vol:0,ok:false};
 }
 
-// ── CoinGecko (works from local file) ────────────────────────────────────────
 async function fetchCoinGecko(){
   try{
-    const ids = 'bitcoin,ethereum';
-    const r = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd&include_24hr_change=true&include_24hr_vol=true`, {signal: AbortSignal.timeout(8000)});
-    if(!r.ok) throw new Error('CoinGecko HTTP '+r.status);
-    const d = await r.json();
-    return {
-      'BTC-USD': {price: d.bitcoin?.usd, chg: d.bitcoin?.usd_24h_change, vol: d.bitcoin?.usd_24h_vol, ok:true, src:'CoinGecko'},
-      'ETH-USD': {price: d.ethereum?.usd, chg: d.ethereum?.usd_24h_change, vol: d.ethereum?.usd_24h_vol, ok:true, src:'CoinGecko'},
-    };
-  }catch(e){
-    return {};
-  }
+    const r=await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd&include_24hr_change=true&include_market_cap=true',{signal:AbortSignal.timeout(8000)});
+    if(!r.ok) throw new Error();
+    const d=await r.json();
+    P['BTC']={price:d.bitcoin?.usd,chg:d.bitcoin?.usd_24h_change,vol:d.bitcoin?.usd_market_cap,ok:true};
+    P['ETH']={price:d.ethereum?.usd,chg:d.ethereum?.usd_24h_change,vol:d.ethereum?.usd_market_cap,ok:true};
+    return 2;
+  }catch(e){return 0;}
 }
 
-// ── Format helpers ────────────────────────────────────────────────────────────
-function fp(n){
-  if(!n||isNaN(n))return'—';
-  if(n>=1000)return'$'+Math.round(n).toLocaleString('en-US');
-  return'$'+n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
-}
-function fv(n){
-  if(!n||isNaN(n))return'—';
-  if(n>=1e9)return(n/1e9).toFixed(1)+'B';
-  if(n>=1e6)return(n/1e6).toFixed(1)+'M';
-  if(n>=1e3)return(n/1e3).toFixed(0)+'K';
-  return String(n);
-}
-function cpill(c){
-  if(c==null||isNaN(c))return'<span class="cp neu">—</span>';
-  const t=(c>=0?'+':'')+c.toFixed(2)+'%';
-  const cl=c>0.05?'pos':c<-0.05?'neg':'neu';
-  return`<span class="cp ${cl}">${t}</span>`;
-}
+// ── FORMAT ───────────────────────────────────────────────────────────────────
+function fp(n){if(!n||isNaN(n))return'—';if(n>=1000)return'$'+Math.round(n).toLocaleString('en-US');return'$'+n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function fv(n){if(!n||isNaN(n))return'—';if(n>=1e12)return(n/1e12).toFixed(1)+'T';if(n>=1e9)return(n/1e9).toFixed(1)+'B';if(n>=1e6)return(n/1e6).toFixed(1)+'M';if(n>=1e3)return(n/1e3).toFixed(0)+'K';return String(n);}
+function cpill(c){if(c==null||isNaN(c))return'<span class="cp neu">—</span>';const t=(c>=0?'+':'')+c.toFixed(2)+'%';return`<span class="cp ${c>0.05?'pos':c<-0.05?'neg':'neu'}">${t}</span>`;}
 function pcls(c){return(!c||isNaN(c))?'':c>0.05?'pos':c<-0.05?'neg':'';}
+const COLS5='65px 1fr 88px 72px 62px';
 
-function renderList(id, tickers, cols){
-  document.getElementById(id).innerHTML = tickers.map(t=>{
+function renderList(id,tickers,cols){
+  document.getElementById(id).innerHTML=tickers.map(t=>{
     const d=P[t.s];
-    return`<div class="tr" style="grid-template-columns:${cols};">
-      <span class="sym">${t.s}</span>
-      <span class="nm">${t.n}</span>
-      <span class="px ${d?pcls(d.chg):''}">${fp(d?.price)}</span>
-      <span style="text-align:right;">${cpill(d?.chg)}</span>
-      <span class="vol">${fv(d?.vol)}</span>
-    </div>`;
+    return`<div class="tr" style="grid-template-columns:${cols};"><span class="sym">${t.s}</span><span class="nm">${t.n}</span><span class="px ${d?pcls(d.chg):''}">${fp(d?.price)}</span><span style="text-align:right;">${cpill(d?.chg)}</span><span class="vol">${fv(d?.vol)}</span></div>`;
   }).join('');
 }
 
+function renderStatic(){
+  document.getElementById('onList').innerHTML=ONS.map(o=>`<div class="tr" style="grid-template-columns:75px 1fr 75px 72px 55px;"><span class="sym">${o.s}</span><span class="nm">${o.n}</span><span class="px pos">${o.tir}</span><span style="text-align:right;"><span class="cp pos">${o.px}</span></span><span class="vol">${o.vto}</span></div>`).join('');
+  document.getElementById('bonosHD').innerHTML=BONOS_HD.map(b=>`<div class="bcard"><div class="bc-sym">${b.s}</div><div class="bc-nm">${b.n}</div><div class="bc-tir">TIR ${b.tir}</div><div class="bc-px">${b.px} <span style="color:${b.pos?'var(--g)':'var(--r)'};font-size:10px;">${b.chg}</span></div></div>`).join('');
+  document.getElementById('bonosPesos').innerHTML=BONOS_PESOS.map(b=>`<div class="bcard"><div class="bc-sym">${b.s}</div><div class="bc-nm">${b.n}</div><div class="bc-tir" style="font-size:14px;">${b.tir}</div><div class="bc-px"><span style="background:rgba(77,166,255,.15);color:var(--blue);padding:2px 7px;border-radius:4px;font-size:10px;">${b.tipo}</span></div></div>`).join('');
+  document.getElementById('cryptoList').innerHTML=[{s:'BTC',n:'Bitcoin'},{s:'ETH',n:'Ethereum'}].map(t=>{const d=P[t.s];return`<div class="tr" style="grid-template-columns:80px 1fr 110px 90px 80px;"><span class="sym">${t.s}</span><span class="nm">${t.n}</span><span class="px ${d?pcls(d.chg):''}">${fp(d?.price)}</span><span style="text-align:right;">${cpill(d?.chg)}</span><span class="vol">${fv(d?.vol)}</span></div>`;}).join('');
+}
+
+function renderAll(){
+  renderList('arList',AR_TICKERS,COLS5);
+  renderList('cedTechList',CED_TECH,COLS5);
+  renderList('cedOtherList',CED_OTHER,COLS5);
+  renderList('etfList',ETF_LIST,COLS5);
+  renderList('sectorList',SECTOR_LIST,COLS5);
+  renderStatic();
+  updateQBar();
+  buildReco();
+  buildAlerts();
+}
+
 function updateQBar(){
-  ['GGAL','YPF','PAM','VIST','NVDA','SPY','GLD','BTC-USD','ETH-USD'].forEach(s=>{
-    const d=P[s];
-    const pe=document.getElementById('q-'+s);
-    const ce=document.getElementById('qc-'+s);
+  [['GGAL','GGAL'],['YPF','YPF'],['PAM','PAM'],['VIST','VIST'],['SPY','SPY'],['NVDA','NVDA'],['GLD','GLD'],['BTC','BTC'],['ETH','ETH'],['IBIT','IBIT']].forEach(([qid,sym])=>{
+    const d=P[sym];const pe=document.getElementById('q-'+qid);const ce=document.getElementById('qc-'+qid);
     if(!pe||!d?.price)return;
-    pe.textContent=fp(d.price);
-    pe.className='qi-p '+(d.chg>0.05?'pos':d.chg<-0.05?'neg':'neu');
-    ce.textContent=(d.chg>=0?'+':'')+d.chg.toFixed(2)+'%';
-    ce.className='qi-c '+(d.chg>0.05?'pos':d.chg<-0.05?'neg':'neu');
+    pe.textContent=fp(d.price);pe.className='qi-p '+(d.chg>0.05?'pos':d.chg<-0.05?'neg':'neu');
+    ce.textContent=(d.chg>=0?'+':'')+d.chg.toFixed(2)+'%';ce.className='qi-c '+(d.chg>0.05?'pos':d.chg<-0.05?'neg':'neu');
   });
 }
 
 function buildReco(){
   const g=s=>P[s];
-  const pam=g('PAM'),vist=g('VIST'),spy=g('SPY'),gld=g('GLD'),btc=g('BTC-USD'),ypf=g('YPF');
+  const pam=g('PAM'),vist=g('VIST'),spy=g('SPY'),gld=g('GLD'),btc=g('BTC'),ypf=g('YPF'),nvda=g('NVDA');
   const recos=[
-    {a:'AL30/GD30',v:'22%',s:'COMPRAR',sc:'s-buy',n:'TIR ~7.7% · riesgo país bajando'},
-    {a:'YPF',v:ypf?.chg>1?'13%':'10%',s:ypf?.chg>1?'COMPRAR':'MANTENER',sc:ypf?.chg>1?'s-buy':'s-hold',n:'Petróleo+Vaca Muerta · '+fp(ypf?.price)},
-    {a:'GLD',v:gld?.chg<-1?'8%':'11%',s:gld?.chg<-1?'ESPERAR':'MANTENER',sc:gld?.chg<-1?'s-wait':'s-hold',n:'Oro '+fp(gld?.price)+' · cobertura'},
-    {a:'PAM',v:pam?.chg>2?'10%':'8%',s:pam?.chg>2?'COMPRAR':'MANTENER',sc:pam?.chg>2?'s-buy':'s-hold',n:'Energía · '+fp(pam?.price)},
-    {a:'VIST',v:'8%',s:'MANTENER',sc:'s-hold',n:'Shale · '+fp(vist?.price)+' · plan $5.6B'},
-    {a:'SPY/QQQ',v:spy?.chg<-0.5?'8%':'11%',s:spy?.chg<-0.5?'ESPERAR':'MANTENER',sc:spy?.chg<-0.5?'s-wait':'s-hold',n:spy?.chg<-0.5?'Sesión débil USA':'Core largo plazo · '+fp(spy?.price)},
-    {a:'GGAL/BMA',v:'6%',s:'PRECAUCIÓN',sc:'s-red',n:'Earnings GGAL mañana 27/5'},
-    {a:'CEPU/EDN',v:'5%',s:'MANTENER',sc:'s-hold',n:'Utilities · bajo riesgo'},
-    {a:'BTC',v:btc?.chg<-2?'3%':'4%',s:btc?.chg<-2?'REDUCIR':'ESPERAR',sc:btc?.chg<-2?'s-red':'s-wait',n:fp(btc?.price)+' · lateral'},
-    {a:'Cash USD',v:'13%',s:'RESERVA',sc:'s-wait',n:'Post-earnings GGAL 27/5'},
+    {a:'AL30/GD30',v:'20%',s:'COMPRAR',sc:'s-buy',n:'TIR 7.6-7.7% · riesgo país bajando'},
+    {a:'YPF',v:ypf?.chg>1?'12%':'9%',s:ypf?.chg>1?'COMPRAR':'MANTENER',sc:ypf?.chg>1?'s-buy':'s-hold',n:'Vaca Muerta · '+fp(ypf?.price)},
+    {a:'GLD/SLV',v:gld?.chg<-1?'7%':'10%',s:gld?.chg<-1?'ESPERAR':'MANTENER',sc:gld?.chg<-1?'s-wait':'s-hold',n:'Metales · '+fp(gld?.price)},
+    {a:'PAM/VIST',v:'10%',s:'MANTENER',sc:'s-hold',n:fp(pam?.price)+' / '+fp(vist?.price)},
+    {a:'SPY/QQQ',v:spy?.chg<-0.5?'8%':'10%',s:spy?.chg<-0.5?'ESPERAR':'MANTENER',sc:spy?.chg<-0.5?'s-wait':'s-hold',n:fp(spy?.price)+' · core USA'},
+    {a:'NVDA/SOXX',v:nvda?.chg<-2?'4%':'7%',s:nvda?.chg<-2?'ESPERAR':'MANTENER',sc:nvda?.chg<-2?'s-wait':'s-hold',n:'Semis · '+fp(nvda?.price)},
+    {a:'IBIT/BTC',v:btc?.chg<-2?'3%':'5%',s:btc?.chg<-2?'REDUCIR':'ESPERAR',sc:btc?.chg<-2?'s-red':'s-wait',n:fp(btc?.price)+' · lateral'},
+    {a:'GGAL/BMA',v:'5%',s:'PRECAUCIÓN',sc:'s-red',n:'Earnings GGAL 27/5'},
+    {a:'ONs USD',v:'8%',s:'COMPRAR',sc:'s-buy',n:'YPF/Pampa TIR 8-9%'},
+    {a:'Cash USD',v:'11%',s:'RESERVA',sc:'s-wait',n:'Post-earnings · oportunidades'},
   ];
-  document.getElementById('recoGrid').innerHTML=recos.map(r=>
-    `<div class="rc"><div class="rca">${r.a}</div><div class="rcv">${r.v}</div><div class="rcs ${r.sc}">${r.s}</div><div class="rcn">${r.n}</div></div>`
-  ).join('');
+  document.getElementById('recoGrid').innerHTML=recos.map(r=>`<div class="rc"><div class="rca">${r.a}</div><div class="rcv">${r.v}</div><div class="rcs ${r.sc}">${r.s}</div><div class="rcn">${r.n}</div></div>`).join('');
   const now=new Date();
-  document.getElementById('recoTs').textContent=
-    now.toLocaleDateString('es-AR')+' · '+now.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
+  document.getElementById('recoTs').textContent=now.toLocaleDateString('es-AR')+' · '+now.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
 }
 
 function buildAlerts(){
-  const pam=P['PAM'],vist=P['VIST'],btc=P['BTC-USD'],spy=P['SPY'],ypf=P['YPF'];
+  const btc=P['BTC'],spy=P['SPY'],ypf=P['YPF'],nvda=P['NVDA'];
   const alerts=[
-    {c:'var(--r)',t:'<strong>GGAL earnings mañana 27/5</strong> — Q1 ganancia -66%. No ampliar bancos hoy.'},
-    {c:'var(--g)',t:'<strong>AL30 +0.93%</strong> — Bonos subiendo · riesgo país ~500pb · Mejor relación riesgo/retorno'},
+    {c:'var(--r)',t:'<strong>GGAL earnings 27/5</strong> — Q1 -66%. No ampliar bancos hoy.'},
+    {c:'var(--g)',t:'<strong>AL30/GD30</strong> — Bonos subiendo · riesgo país ~500pb · Mejor riesgo/retorno'},
   ];
-  if(ypf?.chg>0.5) alerts.push({c:'var(--g)',t:`<strong>YPF +${ypf.chg.toFixed(1)}%</strong> — ${fp(ypf.price)} · Petróleo rebota · Momentum positivo`});
-  if(vist?.price) alerts.push({c:'var(--g)',t:`<strong>VIST</strong> ${fp(vist.price)} · Vaca Muerta · Plan expansión USD 5.600M hasta 2028`});
-  if(pam?.chg<-1) alerts.push({c:'var(--gold)',t:`<strong>PAM ${pam.chg.toFixed(1)}%</strong> — Insider vendió. No sumar hoy.`});
-  if(spy?.chg<-0.5) alerts.push({c:'var(--r)',t:`<strong>SPY ${spy.chg.toFixed(1)}%</strong> — Sesión risk-off USA. Reducir exposición.`});
-  else if(spy?.price) alerts.push({c:'var(--g)',t:`<strong>SPY</strong> ${fp(spy.price)} · Mercado USA estable · Mantener posiciones core`});
-  alerts.push({c:'var(--gold)',t:`<strong>BTC</strong> ${fp(btc?.price)} · Lateral $74.5k–$77k · No agregar hasta ruptura confirmada`});
-  document.getElementById('alertList').innerHTML=alerts.slice(0,6).map(a=>
-    `<div class="al"><div class="ald" style="background:${a.c}"></div><div class="alt">${a.t}</div></div>`
-  ).join('');
+  if(ypf?.chg>0.5) alerts.push({c:'var(--g)',t:`<strong>YPF +${ypf.chg.toFixed(1)}%</strong> — ${fp(ypf.price)} · Petróleo rebota`});
+  if(nvda?.chg<-1.5) alerts.push({c:'var(--gold)',t:`<strong>NVDA ${nvda.chg.toFixed(1)}%</strong> — Semis bajo presión · Esperar soporte`});
+  if(spy?.chg<-0.5) alerts.push({c:'var(--r)',t:`<strong>SPY ${spy.chg.toFixed(1)}%</strong> — Risk-off USA · Reducir exposición`});
+  else if(spy?.price) alerts.push({c:'var(--g)',t:`<strong>SPY</strong> ${fp(spy.price)} · Mercado USA estable`});
+  alerts.push({c:'var(--gold)',t:`<strong>BTC</strong> ${fp(btc?.price)} · Lateral · No agregar`});
+  alerts.push({c:'var(--g)',t:'<strong>ONs USD</strong> · YPF/Pampa TIR 8-9% · Alternativa defensiva'});
+  document.getElementById('alertList').innerHTML=alerts.slice(0,6).map(a=>`<div class="al"><div class="ald" style="background:${a.c}"></div><div class="alt">${a.t}</div></div>`).join('');
 }
 
-// ── MAIN LOAD ─────────────────────────────────────────────────────────────────
+// ── TABS ─────────────────────────────────────────────────────────────────────
+document.querySelectorAll('.tab').forEach(tab=>{
+  tab.addEventListener('click',()=>{
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('tab-'+tab.dataset.tab).classList.add('active');
+  });
+});
+
+// ── MAIN ─────────────────────────────────────────────────────────────────────
 async function loadAll(){
   const btn=document.getElementById('btnR');
   const dot=document.getElementById('sDot');
@@ -324,87 +415,40 @@ async function loadAll(){
   const msgBox=document.getElementById('msgBox');
 
   btn.classList.add('loading');btn.disabled=true;
-  dot.className='dot';
-  stxt.textContent='Conectando...';
-  msgBox.innerHTML='<div class="infobox info-blue">Conectando a corsproxy.io → Yahoo Finance...</div>';
+  dot.className='dot';stxt.textContent='Conectando...';
+  msgBox.innerHTML='<div class="infobox info-blue">Cargando activos via 3 proxies en rotación...</div>';
 
-  // 1. Fetch crypto from CoinGecko (fast, reliable)
-  stxt.textContent='Cargando crypto...';
-  const geckoData = await fetchCoinGecko();
-  Object.assign(P, geckoData);
-
-  // Render crypto immediately
-  document.getElementById('cryptoList').innerHTML = [
-    {s:'BTC-USD',n:'Bitcoin',rank:'#1'},
-    {s:'ETH-USD',n:'Ethereum',rank:'#2'}
-  ].map(t=>{
-    const d=P[t.s];
-    return`<div class="tr" style="grid-template-columns:90px 1fr 110px 90px 65px;">
-      <span class="sym">${t.s.replace('-USD','')}</span>
-      <span class="nm">${t.n}</span>
-      <span class="px ${d?pcls(d.chg):''}">${fp(d?.price)}</span>
-      <span style="text-align:right;">${cpill(d?.chg)}</span>
-      <span class="vol">${t.rank}</span>
-    </div>`;
-  }).join('');
+  // Crypto first (reliable)
+  await fetchCoinGecko();
+  renderStatic();
   updateQBar();
 
-  // 2. Fetch stocks via corsproxy.io → Yahoo (in batches of 3)
-  const allStocks = [...AR, ...CED];
-  let okCount = Object.values(geckoData).filter(d=>d.ok).length;
-  let failCount = 0;
+  // All stocks — fetch with small delay between to avoid rate limits
+  const all=[...AR_TICKERS,...CED_TECH,...CED_OTHER,...ETF_LIST,...SECTOR_LIST];
+  let ok=Object.values(P).filter(d=>d?.ok).length;
 
-  stxt.textContent=`Cargando acciones (0/${allStocks.length})...`;
-
-  for(let i=0; i<allStocks.length; i+=3){
-    const batch = allStocks.slice(i, i+3);
-    const results = await Promise.all(batch.map(t => fetchYahooCors(t.s)));
-    batch.forEach((t,j)=>{
-      P[t.s] = results[j];
-      if(results[j].ok) okCount++;
-      else failCount++;
-    });
-    stxt.textContent=`Cargando acciones (${i+3}/${allStocks.length})...`;
-    // Progressive render
-    renderList('arList', AR, '70px 1fr 95px 80px 65px');
-    renderList('cedList', CED, '70px 1fr 95px 80px 65px');
-    updateQBar();
-    buildReco();
+  for(let i=0;i<all.length;i++){
+    const t=all[i];
+    stxt.textContent=`${i+1}/${all.length} · ${t.s}...`;
+    P[t.s]=await fetchOne(t.s);
+    if(P[t.s].ok) ok++;
+    // Render every 5 tickers
+    if(i%5===4||i===all.length-1) renderAll();
+    // Small delay to avoid hammering proxies
+    await new Promise(r=>setTimeout(r,150));
   }
 
-  buildAlerts();
-
-  const total = allStocks.length + 2;
-  const now = new Date();
-  const ts = now.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  const total=all.length+2;
+  const ts=new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
   document.getElementById('lastUp').textContent='Última actualización: '+ts;
 
-  // Show source info
-  const srcSet = [...new Set(Object.values(P).map(d=>d?.src).filter(Boolean))];
-  document.getElementById('src-ar').textContent = srcSet.includes('corsproxy→Yahoo') ? 'corsproxy→Yahoo' : 'sin datos';
-  document.getElementById('src-ced').textContent = srcSet.includes('corsproxy→Yahoo') ? 'corsproxy→Yahoo' : 'sin datos';
-
-  if(okCount >= total * 0.7){
-    dot.className='dot live';
-    stxt.textContent=`${okCount}/${total} activos · ${ts}`;
+  if(ok>=total*0.7){
+    dot.className='dot live';stxt.textContent=ok+'/'+total+' activos · '+ts;
     msgBox.innerHTML='';
-  } else if(okCount > 2){
-    dot.className='dot partial';
-    stxt.textContent=`${okCount}/${total} · parcial · ${ts}`;
-    msgBox.innerHTML=`<div class="infobox info-blue">⚠️ ${okCount}/${total} activos cargados. corsproxy.io conecta pero algunos símbolos fallan. Reintentá en 30 seg.</div>`;
-  } else {
-    dot.className='dot err';
-    stxt.textContent=`Solo ${okCount} activos`;
-    msgBox.innerHTML=`<div class="infobox info-red">
-      ❌ corsproxy.io no pudo obtener precios de Yahoo Finance.<br><br>
-      <strong>Solución permanente:</strong> Subí el archivo a GitHub Pages (gratis):<br>
-      1. Creá cuenta en github.com<br>
-      2. New repo → subí el .html → Settings → Pages → Enable<br>
-      3. Accedé desde la URL pública → Yahoo funciona sin bloqueos<br><br>
-      Crypto (CoinGecko): <span style="color:var(--g)">${okCount} OK</span>
-    </div>`;
+  }else{
+    dot.className='dot partial';stxt.textContent=ok+'/'+total+' activos';
+    msgBox.innerHTML=`<div class="infobox info-blue">⚠️ ${ok}/${total} activos. Reintentá — los proxies pueden tardar unos segundos en responder.</div>`;
   }
-
   btn.classList.remove('loading');btn.disabled=false;
 }
 
